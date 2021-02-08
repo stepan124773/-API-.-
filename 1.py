@@ -26,13 +26,29 @@ with open(map_file, "wb") as file:
 # Инициализируем pygame
 pygame.init()
 screen = pygame.display.set_mode((600, 450))
-# Рисуем картинку, загружаемую из только что созданного файла.
-screen.blit(pygame.image.load(map_file), (0, 0))
-# Переключаем экран и ждем закрытия окна.
-pygame.display.flip()
-while pygame.event.wait().type != pygame.QUIT:
-    pass
-pygame.quit()
 
-# Удаляем за собой файл с изображением.
+screen.blit(pygame.image.load(map_file), (0, 0))
+
+running = True
+
+while running:
+
+    screen.blit(pygame.image.load(map_file), (0, 0))
+    response = requests.get(map_request, params=parms)
+    map_file = "map.png"
+    with open(map_file, "wb") as file:
+        file.write(response.content)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+
+            if event.key == 1073741906 and int(parms['z']) < 22:
+                parms['z'] = str(int(parms['z']) + 1)
+            if event.key == 1073741905 and 0 < int(parms['z']):
+                parms['z'] = str(int(parms['z']) - 1)
+
+    pygame.display.flip()
+pygame.quit()
 os.remove(map_file)
