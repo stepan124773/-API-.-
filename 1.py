@@ -43,12 +43,26 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-
-            if event.key == 1073741906 and int(parms['z']) < 22:
+            delta = (18 - int(parms['z'])) // 2
+            print(parms['z'], delta)
+            if event.key == pygame.K_PAGEUP and int(parms['z']) < 22:
                 parms['z'] = str(int(parms['z']) + 1)
-            if event.key == 1073741905 and 0 < int(parms['z']):
+            if event.key == pygame.K_PAGEDOWN and 0 < int(parms['z']):
                 parms['z'] = str(int(parms['z']) - 1)
+            if event.key == pygame.K_LEFT:
 
+                if int(parms['ll'].split(',')[0]) - delta > -180:
+                    parms['ll'] = str(int(parms['ll'].split(',')[0]) - delta) + ',' + parms['ll'].split(',')[1]
+            if event.key == pygame.K_RIGHT:
+
+                if int(parms['ll'].split(',')[0]) + delta < 180:
+                    parms['ll'] = str(int(parms['ll'].split(',')[0]) + delta) + ',' + parms['ll'].split(',')[1]
+            if event.key == pygame.K_UP:
+                if int(parms['ll'].split(',')[1]) + delta < 90:
+                    parms['ll'] = parms['ll'].split(',')[0] + ',' + str((int(parms['ll'].split(',')[1]) + delta))
+            if event.key == pygame.K_DOWN:
+                if int(parms['ll'].split(',')[1]) - delta > -90:
+                    parms['ll'] = parms['ll'].split(',')[0] + ',' + str((int(parms['ll'].split(',')[1]) - delta))
     pygame.display.flip()
 pygame.quit()
 os.remove(map_file)
