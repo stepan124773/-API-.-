@@ -32,7 +32,7 @@ screen.blit(pygame.image.load(map_file), (0, 0))
 running = True
 
 while running:
-
+    screen.fill((0, 0, 0))
     screen.blit(pygame.image.load(map_file), (0, 0))
     response = requests.get(map_request, params=parms)
     map_file = "map.png"
@@ -44,7 +44,7 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             delta = (18 - int(parms['z'])) // 2
-            print(parms['z'], delta)
+
             if event.key == pygame.K_PAGEUP and int(parms['z']) < 22:
                 parms['z'] = str(int(parms['z']) + 1)
             if event.key == pygame.K_PAGEDOWN and 0 < int(parms['z']):
@@ -63,6 +63,13 @@ while running:
             if event.key == pygame.K_DOWN:
                 if int(parms['ll'].split(',')[1]) - delta > -90:
                     parms['ll'] = parms['ll'].split(',')[0] + ',' + str((int(parms['ll'].split(',')[1]) - delta))
+            if event.key == pygame.K_KP1:
+                parms['l'] = 'map'
+            if event.key == pygame.K_KP2:
+                parms['l'] = 'sat'
+            if event.key == pygame.K_KP3:
+                parms['l'] = 'sat,skl'
+
     pygame.display.flip()
 pygame.quit()
 os.remove(map_file)
