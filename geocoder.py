@@ -27,7 +27,7 @@ def geocode(address):
     # Согласно описанию ответа он находится по следующему пути:
     features = json_response["response"]["GeoObjectCollection"]["featureMember"]
     return features[0]["GeoObject"] if features else None
-
+print(geocode('москва')['metaDataProperty']['GeocoderMetaData']['Address']['formatted'])
 
 # Получаем координаты объекта по его адресу.
 def get_coordinates(address):
@@ -37,6 +37,7 @@ def get_coordinates(address):
 
     # Координаты центра топонима:
     toponym_coodrinates = toponym["Point"]["pos"]
+
     # Широта, преобразованная в плавающее число:
     toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
     return float(toponym_longitude), float(toponym_lattitude)
