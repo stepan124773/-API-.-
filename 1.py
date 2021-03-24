@@ -4,6 +4,24 @@ from geocoder import get_coordinates, geocode
 import pygame
 import requests
 
+
+def f(zapros):
+    response = requests.get(zapros)
+
+    if response:
+        # Преобразуем ответ в json-объект
+        json_response = response.json()
+
+        address = json_response["response"]['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']
+
+        address = address['GeocoderMetaData']['Address']['postal_code']
+        return address
+    else:
+        print("Ошибка выполнения запроса:")
+        print(zapros)
+        print("Http статус:", response.status_code, "(", response.reason, ")")
+
+
 map_request = "http://static-maps.yandex.ru/1.x/"
 parms = {
     'll': '135,-25',
@@ -33,8 +51,9 @@ color_active = pygame.Color('red')
 color = color_inactive
 running = True
 active = False
-font = pygame.font.Font(None, 32)
+font = pygame.font.Font(None, 22)
 text = ''
+index = ''
 while running:
 
     screen.fill((0, 0, 0))
@@ -55,8 +74,11 @@ while running:
 
                     parms['ll'] = str(int(get_coordinates(text)[0])) + ',' + str(int(get_coordinates(text)[1]))
                     parms['pt'] = parms['ll'] + ',flag'
-
+                    print(geocode(text))
                     text = geocode(text)['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
+                    index = f(
+                        f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={text}&format=json")
+                    text += index
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
                 else:
@@ -66,6 +88,11 @@ while running:
                 parms['z'] = str(int(parms['z']) + 1)
             if event.key == pygame.K_PAGEDOWN and 0 < int(parms['z']):
                 parms['z'] = str(int(parms['z']) - 1)
+            if event.key == pygame.K_i:
+                if index not in text:
+                    text += index
+                else:
+                    text = text[:-len(index)]
             if event.key == pygame.K_LEFT:
 
                 if int(parms['ll'].split(',')[0]) - delta > -180:
@@ -104,4 +131,4 @@ while running:
     pygame.display.flip()
 pygame.quit()
 os.remove(map_file)
-#
+# https://github.com/stepan124773/-API-.-.git 7c28194
