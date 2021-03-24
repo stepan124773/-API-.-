@@ -53,9 +53,8 @@ while running:
                 if event.key == pygame.K_RETURN:
                     active = False
 
-
                     parms['ll'] = str(int(get_coordinates(text)[0])) + ',' + str(int(get_coordinates(text)[1]))
-                    parms['pt']=parms['ll']+',flag'
+                    parms['pt'] = parms['ll'] + ',flag'
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
                 else:
@@ -85,6 +84,8 @@ while running:
                 parms['l'] = 'sat'
             if event.key == pygame.K_KP3:
                 parms['l'] = 'sat,skl'
+            if event.key ==pygame.K_TAB:
+                parms['pt'] = ''
         if event.type == pygame.MOUSEBUTTONDOWN:
 
             if input_box.collidepoint(event.pos):
@@ -100,4 +101,4 @@ while running:
     pygame.display.flip()
 pygame.quit()
 os.remove(map_file)
-# https://github.com/stepan124773/-API-.-.git aa85602
+# https://github.com/stepan124773/-API-.-.git 2aa387b
