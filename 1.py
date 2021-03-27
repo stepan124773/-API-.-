@@ -13,9 +13,10 @@ def f(zapros):
         json_response = response.json()
 
         address = json_response["response"]['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']
-
-        address = address['GeocoderMetaData']['Address']['postal_code']
-        return address
+        if 'postal_code' in address['GeocoderMetaData']['Address'].keys():
+            address = address['GeocoderMetaData']['Address']['postal_code']
+            return address
+        return ''
     else:
         print("Ошибка выполнения запроса:")
         print(zapros)
@@ -24,7 +25,7 @@ def f(zapros):
 
 map_request = "http://static-maps.yandex.ru/1.x/"
 parms = {
-    'll': '135,-25',
+    'll': '135.6,-25.6',
     'z': '4',
     'l': 'map'
 }
@@ -54,6 +55,7 @@ active = False
 font = pygame.font.Font(None, 22)
 text = ''
 index = ''
+
 while running:
 
     screen.fill((0, 0, 0))
@@ -72,7 +74,7 @@ while running:
                 if event.key == pygame.K_RETURN:
                     active = False
 
-                    parms['ll'] = str(int(get_coordinates(text)[0])) + ',' + str(int(get_coordinates(text)[1]))
+                    parms['ll'] = str(get_coordinates(text)[0]) + ',' + str(get_coordinates(text)[1])
                     parms['pt'] = parms['ll'] + ',flag'
                     print(geocode(text))
                     text = geocode(text)['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
@@ -82,31 +84,31 @@ while running:
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
                 else:
-                    if len(text) < 20:
-                        text += event.unicode
+
+                    text += event.unicode
             if event.key == pygame.K_PAGEUP and int(parms['z']) < 22:
                 parms['z'] = str(int(parms['z']) + 1)
             if event.key == pygame.K_PAGEDOWN and 0 < int(parms['z']):
                 parms['z'] = str(int(parms['z']) - 1)
-            if event.key == pygame.K_i:
+            if event.key == pygame.KMOD_SHIFT:
                 if index not in text:
                     text += index
                 else:
                     text = text[:-len(index)]
             if event.key == pygame.K_LEFT:
 
-                if int(parms['ll'].split(',')[0]) - delta > -180:
-                    parms['ll'] = str(int(parms['ll'].split(',')[0]) - delta) + ',' + parms['ll'].split(',')[1]
+                if float(parms['ll'].split(',')[0]) - delta > -180:
+                    parms['ll'] = str(float(parms['ll'].split(',')[0]) - delta) + ',' + parms['ll'].split(',')[1]
             if event.key == pygame.K_RIGHT:
 
-                if int(parms['ll'].split(',')[0]) + delta < 180:
-                    parms['ll'] = str(int(parms['ll'].split(',')[0]) + delta) + ',' + parms['ll'].split(',')[1]
+                if float(parms['ll'].split(',')[0]) + delta < 180:
+                    parms['ll'] = str(float(parms['ll'].split(',')[0]) + delta) + ',' + parms['ll'].split(',')[1]
             if event.key == pygame.K_UP:
-                if int(parms['ll'].split(',')[1]) + delta < 90:
-                    parms['ll'] = parms['ll'].split(',')[0] + ',' + str((int(parms['ll'].split(',')[1]) + delta))
+                if float(parms['ll'].split(',')[1]) + delta < 90:
+                    parms['ll'] = parms['ll'].split(',')[0] + ',' + str((float(parms['ll'].split(',')[1]) + delta))
             if event.key == pygame.K_DOWN:
-                if int(parms['ll'].split(',')[1]) - delta > -90:
-                    parms['ll'] = parms['ll'].split(',')[0] + ',' + str((int(parms['ll'].split(',')[1]) - delta))
+                if float(parms['ll'].split(',')[1]) - delta > -90:
+                    parms['ll'] = parms['ll'].split(',')[0] + ',' + str((float(parms['ll'].split(',')[1]) - delta))
             if event.key == pygame.K_KP1:
                 parms['l'] = 'map'
             if event.key == pygame.K_KP2:
@@ -131,4 +133,4 @@ while running:
     pygame.display.flip()
 pygame.quit()
 os.remove(map_file)
-# https://github.com/stepan124773/-API-.-.git 7c28194
+# https://github.com/stepan124773/-API-.-.git db1a466
